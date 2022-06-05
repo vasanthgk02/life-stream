@@ -1,7 +1,7 @@
 import java.sql.*;
 import java.util.Scanner;  
 
-class vishnu_jdbc{  
+class bloodbank{  
 	
 	public static void main(String args[]){ 
 		
