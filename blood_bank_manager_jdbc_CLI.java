@@ -39,7 +39,7 @@ class bloodbank{
 				}
 			}
 			if(flag == 1) {
-				str = "create table admin(username varchar(10), password varchar(10))";
+				str = "create table admin(username varchar(10) not null, password varchar(10) not null)";
 				stmt.executeUpdate(str);
 				str = "insert into admin values('admin', 'admin')";
 				stmt.executeUpdate(str);
@@ -54,7 +54,7 @@ class bloodbank{
 				}
 			}
 			if(flag == 1) {
-				str = "create table donor(donor_id int, donor_name varchar(10), age varchar(20), gender varchar(20), blood_group varchar(5), height varchar(20), weight varchar(20), address varchar(50), phone_no varchar(20))";
+				str = "create table donor(donor_id int primary key, donor_name varchar(10), age varchar(20), gender varchar(20), blood_group varchar(5), height varchar(20), weight varchar(20), address varchar(50), phone_no varchar(20))";
 				stmt.executeUpdate(str);
 			}
 			
@@ -67,7 +67,7 @@ class bloodbank{
 				}
 			}
 			if(flag == 1) {
-				str = "create table seeker(id int, name varchar(10), address varchar(50), phone_no varchar(20))";
+				str = "create table seeker(id int primary key, name varchar(10), address varchar(50), phone_no varchar(20))";
 				stmt.executeUpdate(str);
 			}
 				
