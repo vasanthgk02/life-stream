@@ -1,7 +1,8 @@
 import java.sql.*;
-import java.util.Scanner;  
+import java.util.*;
 
-class bloodbank{  
+
+class vishnu_jdbc{  
 	
 	public static void main(String args[]){ 
 		
@@ -10,9 +11,10 @@ class bloodbank{
 		
 		try{			
 			
-			
-			Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/","root","admin");   
-			Statement stmt=con.createStatement(); 
+			// Class.forName("com.mysql.jdbc.Driver"); 
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/","root","admin");   
+			Statement stmt = con.createStatement(); 
+			Statement stmt1 = con.createStatement(); 
 			
 			String str = "show databases";
 			ResultSet res = stmt.executeQuery(str);
@@ -39,7 +41,7 @@ class bloodbank{
 				}
 			}
 			if(flag == 1) {
-				str = "create table admin(username varchar(10) not null, password varchar(10) not null)";
+				str = "create table admin(username varchar(10) unique, password varchar(10))";
 				stmt.executeUpdate(str);
 				str = "insert into admin values('admin', 'admin')";
 				stmt.executeUpdate(str);
@@ -67,7 +69,7 @@ class bloodbank{
 				}
 			}
 			if(flag == 1) {
-				str = "create table seeker(id int primary key, name varchar(10), address varchar(50), phone_no varchar(20))";
+				str = "create table seeker(id int primary key, name varchar(10), address varchar(50), phone_no varchar(20), blood_group varchar(20))";
 				stmt.executeUpdate(str);
 			}
 				
@@ -138,7 +140,7 @@ class bloodbank{
 								res = stmt.executeQuery(str);
 								System.out.println("");
 								while(res.next()) {
-									System.out.println(res.getInt("donor_id") + " " + res.getString("donor_name") + " " + res.getInt("age") + " " + res.getString("gender") + " " + res.getString("blood_group") + " " + res.getString("height") + " " + res.getString("weight") + " " + res.getString("address") + " " + res.getString("phone_no"));
+									System.out.println(res.getInt("donor_id") + " " + res.getString("donor_name") + " " + res.getString("age") + " " + res.getString("gender") + " " + res.getString("blood_group") + " " + res.getString("height") + " " + res.getString("weight") + " " + res.getString("address") + " " + res.getString("phone_no"));
 									count++;
 								}
 								if(count == 0) {
@@ -203,7 +205,7 @@ class bloodbank{
 								
 								while(res.next()) {
 									
-									System.out.println(res.getInt("id") + " " + res.getString("name") + " "  + res.getString("address") + " " + res.getString("phone_no"));
+									System.out.println(res.getInt("id") + " " + res.getString("name") + " "  + res.getString("address") + " " + res.getString("phone_no") + " " + res.getString("blood_group"));
 									count++;
 									
 								}
@@ -244,13 +246,46 @@ class bloodbank{
 							
 						}else if(admin == 3){						
 							
-							
-							System.out.println("\n1. Units of blood in each type");
+							System.out.println("\n0. Donor - Seeker matchings");
+							System.out.println("1. Units of blood in each type");
 							System.out.println("2. Diplay persons with their blood group");
 							System.out.print("Enter the choice : ");						
 							int option = sc.nextInt();
 							
-							if(option == 1) {
+							if(option == 0){
+
+								str = "select * from seeker";
+								res = stmt.executeQuery(str);
+																
+								while(res.next()){
+									
+									int times = 0;
+									String req_blood = res.getString("blood_group");
+
+									StringBuilder build = new StringBuilder("select * from donor where blood_group = '");
+									build.append(req_blood);
+									build.append("'");
+									ResultSet donor_blood = stmt1.executeQuery(build.toString());
+
+									System.out.println("\n" + res.getString("name") + " - required blood group is " + res.getString("blood_group")) ;
+									System.out.println("The donor - seeker matchings are : ");
+									while(donor_blood.next()){
+										System.out.println(donor_blood.getString("donor_name") + " " + donor_blood.getString("blood_group") + " " + donor_blood.getString("phone_no"));
+										times++;
+									}
+
+									if(times == 0){
+										System.out.println("No donors availabe for this seeker");
+									}else{
+										System.out.println("Totally " + times + " donors available for this seeker");
+									}
+
+								}
+								
+
+							}
+
+							else if(option == 1) {
 							
 								str = "select blood_group, count(*) as count from donor group by blood_group";
 								res = stmt.executeQuery(str);
@@ -412,8 +447,14 @@ class bloodbank{
 							
 							System.out.print("seeker phone_no : ");
 							build.append(sc.next());
-							build.append(")");
+							build.append(",");
+
+							System.out.print("seeker blood_group : ");
+							build.append("'");
+							build.append(sc.next());
+							build.append("') ");
 	
+							// System.out.println(build.toString());
 							System.out.println("\nSuccessfully inserted!");
 							stmt.executeUpdate(build.toString());
 							
